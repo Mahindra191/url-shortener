@@ -1,0 +1,1 @@
+{"rewrites": [{"source": "/:shortCode", "destination": "https://url-shortener-backend-1ref.onrender.com/:shortCode"}]}
