@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mongodb-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: url-mongodb
+  template:
+    metadata:
+      labels:
+        app: url-mongodb
+    spec:
+      containers:
+      - name: mongodb
+        image: mongo:latest
+        ports:
+        - containerPort: 27017
+        # 🎯 Storage Mount points inside the database container
+        volumeMounts:
+        - name: mongo-persistent-storage
+          mountPath: /data/db
+      # 📂 Maps a folder on your Windows computer directly to the container
+      volumes:
+      - name: mongo-persistent-storage
+        hostPath:
+          path: /run/desktop/mnt/host/c/mongodb_kubernetes_data
+          type: DirectoryOrCreate
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongodb-service
+spec:
+  selector:
+    app: url-mongodb
+  ports:
+    - protocol: TCP
+      port: 27017
+      targetPort: 27017

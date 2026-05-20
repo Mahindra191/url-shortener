@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  url-shortener-app:
+    build: .
+    container_name: url-shortener-backend
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_DATA_MONGODB_URI=mongodb://root:example@url-shortener-db:27017/url_shortener?authSource=admin
+      - SPRING_DATA_REDIS_HOST=url-shortener-cache
+      - SPRING_DATA_REDIS_PORT=6379
+    depends_on:
+      - url-shortener-db
+      - url-shortener-cache
+    networks:
+      - url-net
+
+  url-shortener-db:
+    image: mongo:latest
+    container_name: url-shortener-db
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - url-net
+
+  url-shortener-cache:
+    image: redis:alpine
+    container_name: url-shortener-cache
+    ports:
+      - "6379:6379"
+    networks:
+      - url-net
+
+volumes:
+  mongo-data:
+
+networks:
+  url-net:
+    driver: bridge
