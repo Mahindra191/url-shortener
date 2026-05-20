@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link2, ArrowRight, Copy, CheckCircle2, AlertCircle, BarChart3, ShieldAlert } from 'lucide-react';
+import { Link2, ArrowRight, Copy, CheckCircle2, AlertCircle } from 'lucide-react';
 
 function App() {
   const [longUrl, setLongUrl] = useState('');
@@ -9,8 +9,8 @@ function App() {
   const [copied, setCopied] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  // 🎯 CENTRAL KUBERNETES GATEWAY: Pointing directly to our stable cluster NodePort 
-  const K8S_BACKEND_URL = "http://localhost:30080";
+  // 🎯 DYNAMIC ENVIRONMENT GATEWAY: Reads your cloud URL on Vercel, or falls back to your local cluster port
+  const BACKEND_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:30080";
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -20,19 +20,19 @@ function App() {
     setLoading(true);
 
     try {
-      const response = await fetch(`${K8S_BACKEND_URL}/shorten`, {
+      const response = await fetch(`${BACKEND_URL}/shorten`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
           longUrl, 
-          customAlias: customAlias.trim() || "" // 🎯 Sends an empty string instead of null
+          customAlias: customAlias.trim() || "" 
         }),
       });
 
       // 1. SUCCESS: Server responded with standard 200 OK plain text short code
       if (response.ok) {
         const shortCode = await response.text();
-        setShortUrl(`${K8S_BACKEND_URL}/${shortCode}`); // Maps perfectly to cluster redirection path
+        setShortUrl(`${BACKEND_URL}/${shortCode}`); // Maps perfectly to redirection path
         setLongUrl('');
         setCustomAlias('');
         return;
@@ -43,11 +43,9 @@ function App() {
       
       if (errorData) {
         if (errorData.fallbackUrl) {
-          // 🎯 Smart Fallback matched! Show the error reason AND load the working short link card
           setError(errorData.error);
-          setShortUrl(`${K8S_BACKEND_URL}/${errorData.fallbackUrl}`);
+          setShortUrl(`${BACKEND_URL}/${errorData.fallbackUrl}`);
         } else {
-          // Standard operational validation error (e.g., purely numeric inputs)
           setError(errorData.error || "Bad Request processing transaction.");
         }
       } else {
