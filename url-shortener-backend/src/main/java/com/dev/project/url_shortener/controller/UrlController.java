@@ -20,7 +20,7 @@ import com.dev.project.url_shortener.repository.UrlRepository;
 @RequestMapping
 // 🎯 MASTER CORS KEY: Authorizes both your local machine environment AND your live global Vercel frontend domain
 @CrossOrigin(
-    origins = { "http://localhost:5173", "https://url-shortener-fawn-two.vercel.app" }, 
+    origins = { "http://localhost:5173", "https://url-17.vercel.app" }, 
     allowedHeaders = "*", 
     methods = { RequestMethod.POST, RequestMethod.GET, RequestMethod.OPTIONS }
 )
