@@ -32,7 +32,10 @@ function App() {
       // 1. SUCCESS: Server responded with standard 200 OK plain text short code
       if (response.ok) {
         const shortCode = await response.text();
-        setShortUrl(`${BACKEND_URL}/${shortCode}`); // Maps perfectly to redirection path
+        
+        // 🎯 FIX: Changed BACKEND_URL to window.location.origin to use your url-17.vercel.app domain
+        setShortUrl(`${window.location.origin}/${shortCode}`); 
+        
         setLongUrl('');
         setCustomAlias('');
         return;
@@ -44,7 +47,9 @@ function App() {
       if (errorData) {
         if (errorData.fallbackUrl) {
           setError(errorData.error);
-          setShortUrl(`${BACKEND_URL}/${errorData.fallbackUrl}`);
+          
+          // 🎯 FIX: Also use window.location.origin here for your duplicate fallback link cards
+          setShortUrl(`${window.location.origin}/${errorData.fallbackUrl}`);
         } else {
           setError(errorData.error || "Bad Request processing transaction.");
         }
