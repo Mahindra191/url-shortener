@@ -39,7 +39,7 @@ public class UrlService {
         }
 
         // 1. Uniformly clean and normalize the target URL layout
-        String sanitizedUrl = longUrl.replace("\\", "").replace("\"", "").trim().toLowerCase();
+        String sanitizedUrl = longUrl.replace("\\", "").replace("\"", "").trim();
         sanitizedUrl = sanitizedUrl.replaceAll("^(https?://)?(www\\.)?", "https://");
         if (sanitizedUrl.endsWith("/")) {
             sanitizedUrl = sanitizedUrl.substring(0, sanitizedUrl.length() - 1);
